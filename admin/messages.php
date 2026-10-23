@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__ . '/../includes/functions.php'; requireAdmin();
+$pageTitle='Pesan Masuk — JelajahNusa';$messages=$pdo->query("SELECT * FROM messages ORDER BY created_at DESC")->fetchAll();include __DIR__.'/../includes/header.php';
+?>
+<section class="page-hero compact-hero"><div class="container"><span class="eyebrow dark-eyebrow">PANEL PENGELOLA</span><h1>Pesan <em>masuk.</em></h1><p>Masukan dan rekomendasi dari pengunjung.</p></div></section><section class="container section message-list"><?php if(!$messages): ?><div class="empty-state"><h2>Belum ada pesan</h2></div><?php endif; ?><?php foreach($messages as $m): ?><article class="message-card"><div class="message-top"><div><h2><?= e($m['subject']) ?></h2><p><?= e($m['name']) ?> · <?= e($m['email']) ?></p></div><time><?= e($m['created_at']) ?></time></div><p><?= nl2br(e($m['message'])) ?></p></article><?php endforeach; ?><a class="btn btn-light" href="index.php">← Kembali ke dashboard</a></section>
+<?php include __DIR__.'/../includes/footer.php'; ?>

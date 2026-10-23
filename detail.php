@@ -1,0 +1,13 @@
+<?php
+require_once __DIR__ . '/includes/functions.php';
+$slug = trim($_GET['slug'] ?? '');
+$stmt = $pdo->prepare("SELECT * FROM destinations WHERE slug=? AND status='published' LIMIT 1");
+$stmt->execute([$slug]); $d = $stmt->fetch();
+if (!$d) { http_response_code(404); $pageTitle='Destinasi tidak ditemukan'; include __DIR__.'/includes/header.php'; echo '<section class="container empty-state"><h1>Destinasi tidak ditemukan</h1><p>Destinasi mungkin sudah dipindahkan atau belum tersedia.</p><a class="btn btn-primary" href="destinasi.php">Kembali ke destinasi</a></section>'; include __DIR__.'/includes/footer.php'; exit; }
+$pageTitle = $d['name'].' — JelajahNusa';
+include __DIR__ . '/includes/header.php';
+?>
+<section class="detail-cover" style="background-image:linear-gradient(90deg,rgba(19,35,29,.78),rgba(19,35,29,.08)),url('<?= e($d['image_url'] ?: imageFallback()) ?>')"><div class="container detail-cover-inner"><a class="back-link" href="destinasi.php">← Semua destinasi</a><span class="eyebrow"><?= e(strtoupper($d['region'])) ?> / <?= e(strtoupper($d['category'])) ?></span><h1><?= e($d['name']) ?></h1><p>⌖ <?= e($d['province']) ?></p></div></section>
+<section class="container detail-layout section"><article class="detail-main"><span class="eyebrow dark-eyebrow">TENTANG DESTINASI</span><h2>Kenali lebih dekat <em><?= e($d['name']) ?>.</em></h2><p class="detail-description"><?= nl2br(e($d['description'])) ?></p><?php if($d['tips']): ?><div class="tip-box"><span class="value-icon">✳</span><div><h3>Tips berkunjung</h3><p><?= nl2br(e($d['tips'])) ?></p></div></div><?php endif; ?><div class="responsible-note"><h3>Jelajahi dengan bertanggung jawab</h3><p>Jaga kebersihan, hormati aturan setempat, dan hargai tradisi masyarakat yang tinggal di sekitar destinasi.</p></div></article>
+<aside class="detail-aside"><div class="aside-card"><span class="eyebrow dark-eyebrow">RINGKASAN</span><div class="info-row"><span>Provinsi</span><strong><?= e($d['province']) ?></strong></div><div class="info-row"><span>Wilayah</span><strong><?= e($d['region']) ?></strong></div><div class="info-row"><span>Kategori</span><strong><?= e($d['category']) ?></strong></div><?php if($d['best_time']): ?><div class="info-row"><span>Waktu terbaik</span><strong><?= e($d['best_time']) ?></strong></div><?php endif; ?><?php if($d['map_url']): ?><a class="btn btn-dark btn-full" href="<?= e($d['map_url']) ?>" target="_blank" rel="noopener">Buka peta lokasi ↗</a><?php endif; ?></div><a class="text-link" href="kontak.php">Kirim saran destinasi ↗</a></aside></section>
+<?php include __DIR__ . '/includes/footer.php'; ?>
